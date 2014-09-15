@@ -1,15 +1,24 @@
 class serf(
-  $version  = '0.6.3',
-  $conf_dir = '/etc/serf',
-  $conf     = {},
-  $tmp      = '/tmp',
+  $version   = '0.6.3',
+  $node_name = '',
+  $conf_dir  = '/etc/serf',
+  $conf      = {},
+  $tmp       = '/tmp',
 ) {
 
   validate_string($version)
+  validate_string($node_name)
+  validate_hash($conf)
   validate_absolute_path($conf_dir)
   validate_absolute_path($tmp)
 
   ensure_packages(['wget', 'unzip'])
+
+  if(empty($conf['bind'])) {
+    $conf['bind'] = "${ipaddress_eth0}:${conf['port']}"
+  }
+
+  $conf['node_name'] = $node_name
 
   file { 'serf conf dir':
     ensure => directory,
