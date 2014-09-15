@@ -2,15 +2,5 @@
 #
 # http://www.serfdom.io/docs/agent/options.html
 #
-#config_file= {}
-#config_file['node_name']          = @conf['node_name'] if @conf['node_name']
-#config_file['bind']               = @conf['bind'] if @conf['bind']
-#config_file['log_level']          = @conf['log_level'] if @conf['log_level']
-#config_file['rpc_addr']           = @conf['rpc_addr'] if @conf['rpc_addr']
-#config_file['event_handlers']     = @conf['event_handlers'] unless @conf['event_handlers'].empty?
-#config_file['start_join']         = @conf['start_join'] unless @conf['start_join'].empty?
-#config_file['retry_join']         = @conf['retry_join'] unless @conf['retry_join'].empty?
-#config_file['snapshot_path']      = @conf['snapshot_path'] if @conf['snapshot_path']
-#config_file['reconnect_interval'] = @conf['reconnect_interval'] if @conf['reconnect_interval']
 -%>
-<%= JSON.generate(@conf) %>
+<%= JSON.generate(@conf_tmp) %>

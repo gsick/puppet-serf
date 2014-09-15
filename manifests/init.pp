@@ -1,6 +1,7 @@
 class serf(
   $version   = '0.6.3',
   $node_name = $::hostname,
+  $port      = 7496,
   $conf_dir  = '/etc/serf',
   $conf      = {},
   $user      = 'root',
@@ -17,7 +18,7 @@ class serf(
   ensure_packages(['wget', 'unzip'])
 
   if(empty($conf['bind'])) {
-    $bind = "${ipaddress_eth0}:${conf['port']}"
+    $bind = "${ipaddress_eth0}:${port}"
   }
 
   $conf_tmp = merge($conf, {bind => $bind, node_name => $node_name})
