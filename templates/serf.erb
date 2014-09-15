@@ -3,6 +3,7 @@
 PATH=/usr/sbin:/usr/bin:/sbin:/bin
 DESC="serf service"
 NAME=serf
+LOGFILE=/var/log/serf/serf.log
 CONFFILE=/etc/serf/serf.json
 PIDFILE=/var/run/$NAME/$NAME.pid
 SCRIPTNAME=/etc/init.d/$NAME
@@ -41,7 +42,7 @@ start() {
     echo $"$PIDFILE exists (pid $PID), service $NAME is already running or crashed"
     return 0
   else
-    daemon --pidfile=$PIDFILE --user=$USER $"$NAME agent -config-file $CONFFILE &"
+    daemon --pidfile=$PIDFILE --user=$USER $"$NAME agent -config-file $CONFFILE >> $LOGFILE 2>&1 &"
     RETVAL=$?
     ps -ef | grep -F "${NAME} agent" | grep -v 'grep' | awk '{print $2}' > ${PIDFILE}
     echo
