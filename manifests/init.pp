@@ -3,6 +3,8 @@ class serf(
   $node_name = '',
   $conf_dir  = '/etc/serf',
   $conf      = {},
+  $user      = 'root',
+  $group     = 'root',
   $tmp       = '/tmp',
 ) {
 
@@ -20,9 +22,40 @@ class serf(
 
   $conf['node_name'] = $node_name
 
+  group { 'serf group':
+    ensure => present,
+    name   => $group,
+  }
+
+  user { 'serf user':
+    ensure     => present,
+    name       => $user,
+    groups     => $group,
+    managehome => true,
+    shell      => '/bin/bash',
+    require    => Group['serf group'],
+  }
+
   file { 'serf conf dir':
     ensure => directory,
     path   => $conf_dir,
+  }
+
+  file { 'serf local dir':
+    ensure  => directory,
+    path    => '/usr/local/serf',
+    owner   => $user,
+    group   => $group,
+    require => User['serf user'],
+  }
+
+  file { 'serf local bin dir':
+    ensure  => directory,
+    path    => '/usr/local/serf/bin',
+    require => File['serf local dir'],
+    owner   => $user,
+    group   => $group,
+    require => User['serf user'],
   }
 
   exec { 'download serf':
@@ -45,15 +78,15 @@ class serf(
   exec { 'install serf':
     cwd     => $tmp,
     path    => '/sbin:/bin:/usr/bin',
-    command => "cp ${tmp}/serf /usr/local/bin/",
-    creates => '/usr/local/bin/serf',
-    notify  => Service['serf'],
+    command => "cp ${tmp}/serf /usr/local/serf/bin/",
+    creates => '/usr/local/serf/bin/serf',
+    notify  => [Service['serf'], File['serf local bin dir']],
   }
 
   file { 'serf svc link':
     ensure  => 'link',
     path    => '/usr/bin/serf',
-    target  => '/usr/local/bin/serf',
+    target  => '/usr/local/serf/bin/serf',
     require => Exec['install serf'],
     notify  => Service['serf'],
   }

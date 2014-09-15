@@ -9,7 +9,7 @@ SCRIPTNAME=/etc/init.d/$NAME
 
 SYSTEMCTL_SKIP_REDIRECT=1
 
-USER=root
+USER=<%= @user %>
 
 [[ -d /var/run/$NAME ]] || mkdir -p /var/run/$NAME
 
