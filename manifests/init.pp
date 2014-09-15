@@ -1,6 +1,6 @@
 class serf(
   $version   = '0.6.3',
-  $node_name = '',
+  $node_name = $::hostname,
   $conf_dir  = '/etc/serf',
   $conf      = {},
   $user      = 'root',
