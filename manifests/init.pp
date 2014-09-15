@@ -52,10 +52,9 @@ class serf(
   file { 'serf local bin dir':
     ensure  => directory,
     path    => '/usr/local/serf/bin',
-    require => File['serf local dir'],
     owner   => $user,
     group   => $group,
-    require => User['serf user'],
+    require => [File['serf local dir'],User['serf user']],
   }
 
   exec { 'download serf':
