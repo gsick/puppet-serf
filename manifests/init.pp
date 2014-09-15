@@ -17,10 +17,10 @@ class serf(
   ensure_packages(['wget', 'unzip'])
 
   if(empty($conf['bind'])) {
-    $conf['bind'] = "${ipaddress_eth0}:${conf['port']}"
+    $bind = "${ipaddress_eth0}:${conf['port']}"
   }
 
-  $conf['node_name'] = $node_name
+  $conf_tmp = merge($conf, {bind => $bind, node_name => $node_name})
 
   group { 'serf group':
     ensure => present,
