@@ -79,7 +79,8 @@ class serf(
     path    => '/sbin:/bin:/usr/bin',
     command => "cp ${tmp}/serf /usr/local/serf/bin/",
     creates => '/usr/local/serf/bin/serf',
-    notify  => [Service['serf'], File['serf local bin dir']],
+    require => File['serf local bin dir'],
+    notify  => Service['serf'],
   }
 
   file { 'serf svc link':
