@@ -1,0 +1,10 @@
+name         'gsick-serf'
+version      '0.0.1'
+source       'https://github.com/gsick/puppet-serf.git'
+author       'Gamaliel Sick'
+license      'MIT'
+summary      'Serf installation and configuration module'
+description  'Puppet module for installing and configuring Serf'
+project_page 'https://github.com/gsick/puppet-serf'
+
+dependency   'puppetlabs/stdlib', '>= 4.2.2'

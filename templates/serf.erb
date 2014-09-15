@@ -1,0 +1,96 @@
+#!/bin/bash
+
+PATH=/usr/sbin:/usr/bin:/sbin:/bin
+DESC="serf service"
+NAME=serf
+CONFFILE=/etc/serf/serf.json
+PIDFILE=/var/run/$NAME/$NAME.pid
+SCRIPTNAME=/etc/init.d/$NAME
+
+SYSTEMCTL_SKIP_REDIRECT=1
+
+USER=root
+
+[[ -d /var/run/$NAME ]] || mkdir -p /var/run/$NAME
+
+###############
+# SysV Init Information
+# chkconfig: 2345 20 80
+# description: serf service
+### BEGIN INIT INFO
+# Provides: $NAME
+# Required-Start: $network $local_fs $remote_fs
+# Required-Stop: $network $local_fs $remote_fs
+# Default-Start: 2 3 4 5
+# Default-Stop: 0 1 6
+# Should-Start: $syslog $named
+# Should-Stop: $syslog $named
+# Short-Description: start and stop serf
+# Description: serf daemon
+### END INIT INFO
+
+# Get function from functions library
+. /etc/init.d/functions
+# Start the service
+start() {
+  echo -n "Starting $NAME service..."
+  if [ -f $PIDFILE ]
+  then
+    PID=`cat $PIDFILE`
+    failure && echo
+    echo $"$PIDFILE exists (pid $PID), service $NAME is already running or crashed"
+    return 0
+  else
+    daemon --pidfile=$PIDFILE --user=$USER $"$NAME agent -config-file $CONFFILE &"
+    RETVAL=$?
+    ps -ef | grep -F "${NAME} agent" | grep -v 'grep' | awk '{print $2}' > ${PIDFILE}
+    echo
+    return $RETVAL
+  fi
+}
+# Stop the service
+stop() {
+  echo -n "Stopping $NAME service..."
+  if [ ! -f $PIDFILE ]
+  then
+    failure && echo
+    echo "$PIDFILE does not exist, process is not running"
+    return 0
+  else
+    killproc -p $PIDFILE $NAME
+    RETVAL=$?
+    echo
+    return $RETVAL
+  fi
+}
+# Reload the service
+reload() {
+  echo -n "Reloading $NAME service..."
+  killproc -p $PIDFILE $NAME -HUP
+  RETVAL=$?
+  echo
+  return $RETVAL
+}
+### main logic ###
+case "$1" in
+  start)
+        start
+        ;;
+  stop)
+        stop
+        ;;
+  status)
+        status -p $PIDFILE $NAME
+        ;;
+  restart)
+        stop
+        start
+        ;;
+  reload)
+        reload
+        ;;
+  *)
+        echo $"Usage: $0 {start|stop|restart|reload|status}"
+        exit 1
+esac
+exit $?
