@@ -23,19 +23,19 @@ class serf(
 
   $conf_tmp = merge($conf, {bind => $bind, node_name => $node_name})
 
-  group { 'serf group':
-    ensure => present,
-    name   => $group,
-  }
+  #group { 'serf group':
+  #  ensure => present,
+  #  name   => $group,
+  #}
 
-  user { 'serf user':
-    ensure     => present,
-    name       => $user,
-    groups     => $group,
-    managehome => true,
-    shell      => '/bin/bash',
-    require    => Group['serf group'],
-  }
+  #user { 'serf user':
+  #  ensure     => present,
+  #  name       => $user,
+  #  groups     => $group,
+  #  managehome => true,
+  #  shell      => '/bin/bash',
+  #  require    => Group['serf group'],
+  #}
 
   file { 'serf conf dir':
     ensure => directory,
@@ -47,7 +47,7 @@ class serf(
     path    => '/usr/local/serf',
     owner   => $user,
     group   => $group,
-    require => User['serf user'],
+  #  require => User['serf user'],
   }
 
   file { 'serf local bin dir':
@@ -55,7 +55,8 @@ class serf(
     path    => '/usr/local/serf/bin',
     owner   => $user,
     group   => $group,
-    require => [File['serf local dir'],User['serf user']],
+  #  require => [File['serf local dir'],User['serf user']],
+    require => File['serf local dir'],
   }
 
   exec { 'download serf':
